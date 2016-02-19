@@ -41,6 +41,7 @@ class Admin::OrganizationUsersController < Admin::AdminController
     @user.save(raise_on_failure: true)
     @user.create_in_central
 
+=begin
     # if this user is an admin user of the saml based organization, then add him to the saml_users
     if (current_user.organization.saml_idp_name.length != 0) 
       @saml_user = SamlUser.new
@@ -49,7 +50,7 @@ class Admin::OrganizationUsersController < Admin::AdminController
       @saml_user.idp_name = current_user.organization.saml_idp_name
       @saml_user.save(raise_on_failure: true)
     end
-
+=end
     common_data_url = CartoDB::Visualization::CommonDataService.build_url(self)
     ::Resque.enqueue(::Resque::UserJobs::CommonData::LoadCommonData, @user.id, common_data_url)
     @user.notify_new_organization_user
