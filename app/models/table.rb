@@ -868,6 +868,8 @@ class Table
     cartodb_type = options[:type].convert_to_cartodb_type
     column_name = options[:name].to_s.sanitize_column_name
     owner.in_database.add_column name, column_name, type
+    invalidate_varnish_cache
+    update_cdb_tablemetadata
     self.invalidate_varnish_cache
     return {:name => column_name, :type => type, :cartodb_type => cartodb_type}
   rescue => e
@@ -881,6 +883,8 @@ class Table
   def drop_column!(options)
     raise if CARTODB_COLUMNS.include?(options[:name].to_s)
     owner.in_database.drop_column name, options[:name].to_s
+    invalidate_varnish_cache
+    update_cdb_tablemetadata
     self.invalidate_varnish_cache
   end
 
