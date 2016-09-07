@@ -35,9 +35,28 @@ class SamlController < ApplicationController
       logger.error @signup_errors[:saml_error].first
       render 'shared/signup_issue'
     else
-      redirect_to CartoDB.url(self, 'dashboard', {trailing_slash: true}, user)
+       relay_state = JSON.parse(params[:RelayState])
+       wakeup_path = relay_state["wakeup_state"]["wakeup_path"]
+       
+       case wakeup_path
+
+       #datasets
+       when "datasets"
+	 tag = relay_state["wakeup_state"]["tag"]
+	 redirect_to CartoDB.url(self, 'datasets_tag', { tag: tag }, user)
+       else
+	 redirect_to CartoDB.url(self, 'dashboard', {trailing_slash: true}, user)
+       end
     end
 
+ end
+
+ def handle_relay_state params
+
+     
+   
+   #redirect_to datasets_tag_url(user: user.username, tag:":commodities")
+   #redirect_to CartoDB.url(self, 'datasets_tag', { tag: "commodities" }, user)
  end
 
  def load_organization
